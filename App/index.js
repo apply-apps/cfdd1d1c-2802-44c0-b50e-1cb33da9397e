@@ -2,30 +2,9 @@
 // Combined code from all files
 
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
-import { Picker as ReactNativePicker } from '@react-native-picker/picker';
+import { SafeAreaView, StyleSheet, Text, View, Button, ActivityIndicator, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-
-function App() {
-    const [languages, setLanguages] = React.useState({ source: '', target: '' });
-    const [step, setStep] = React.useState(0);
-
-    const handleLanguageSelection = (selectedLanguages) => {
-        setLanguages(selectedLanguages);
-        setStep(1); // Move to the first learning step
-    };
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Learn A New Language</Text>
-            {step === 0 ? (
-                <LanguageSelector onSelect={handleLanguageSelection} />
-            ) : (
-                <LearningStep languages={languages} step={step} setStep={setStep} />
-            )}
-        </SafeAreaView>
-    );
-}
 
 function LanguageSelector({ onSelect }) {
     const [sourceLanguage, setSourceLanguage] = React.useState('');
@@ -38,28 +17,28 @@ function LanguageSelector({ onSelect }) {
     };
 
     return (
-        <View style={styles.languageSelectorContainer}>
+        <View style={styles.container}>
             <Text style={styles.label}>Select your source language:</Text>
-            <ReactNativePicker
+            <Picker
                 selectedValue={sourceLanguage}
                 onValueChange={(itemValue) => setSourceLanguage(itemValue)}
                 style={styles.picker}
             >
-                <ReactNativePicker.Item label="English" value="en" />
-                <ReactNativePicker.Item label="Spanish" value="es" />
+                <Picker.Item label="English" value="en" />
+                <Picker.Item label="Spanish" value="es" />
                 {/* Add more languages as needed */}
-            </ReactNativePicker>
+            </Picker>
 
             <Text style={styles.label}>Select the language you want to learn:</Text>
-            <ReactNativePicker
+            <Picker
                 selectedValue={targetLanguage}
                 onValueChange={(itemValue) => setTargetLanguage(itemValue)}
                 style={styles.picker}
             >
-                <ReactNativePicker.Item label="French" value="fr" />
-                <ReactNativePicker.Item label="German" value="de" />
+                <Picker.Item label="French" value="fr" />
+                <Picker.Item label="German" value="de" />
                 {/* Add more languages as needed */}
-            </ReactNativePicker>
+            </Picker>
             
             <Button title="Start Learning" onPress={handleSelection} />
         </View>
@@ -98,7 +77,7 @@ function LearningStep({ languages, step, setStep }) {
     }
 
     return (
-        <View style={styles.learningStepContainer}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.step}>Step {step}</Text>
             <Text style={styles.content}>{content}</Text>
             <Button
@@ -106,7 +85,28 @@ function LearningStep({ languages, step, setStep }) {
                 onPress={() => setStep(step + 1)}
                 style={styles.nextButton}
             />
-        </View>
+        </ScrollView>
+    );
+}
+
+export default function App() {
+    const [languages, setLanguages] = React.useState({ source: '', target: '' });
+    const [step, setStep] = React.useState(0);
+
+    const handleLanguageSelection = (selectedLanguages) => {
+        setLanguages(selectedLanguages);
+        setStep(1); // Move to the first learning step
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.title}>Learn A New Language</Text>
+            {step === 0 ? (
+                <LanguageSelector onSelect={handleLanguageSelection} />
+            ) : (
+                <LearningStep languages={languages} step={step} setStep={setStep} />
+            )}
+        </SafeAreaView>
     );
 }
 
@@ -120,9 +120,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginVertical: 20,
     },
-    languageSelectorContainer: {
-        margin: 20,
-    },
     label: {
         fontSize: 16,
         marginVertical: 10,
@@ -131,9 +128,6 @@ const styles = StyleSheet.create({
         height: 50,
         width: '100%',
         marginBottom: 20,
-    },
-    learningStepContainer: {
-        margin: 20,
     },
     step: {
         fontSize: 20,
@@ -148,5 +142,3 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
 });
-
-export default App;
